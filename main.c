@@ -372,20 +372,16 @@ void render_scene() {
         float transform_x = inv_det*(g_dir_y*sprite_x-g_dir_x*sprite_y);
         float transform_y = inv_det*(-g_plane_y*sprite_x+g_plane_x*sprite_y);
 
-        if(transform_y > 0) {
-            int sprite_screen_x=(int)((SCREEN_WIDTH/2)*(1+transform_x/transform_y));
-            int sprite_size = abs((int)(SCREEN_HEIGHT/transform_y)) / 4;
-            int draw_start_y=-sprite_size/2+SCREEN_HEIGHT/2;
-            int draw_end_y=sprite_size/2+SCREEN_HEIGHT/2;
-            int draw_start_x=-sprite_size/2+sprite_screen_x;
-            int draw_end_x=sprite_size/2+sprite_screen_x;
-            
-            for(int stripe=draw_start_x; stripe<draw_end_x; ++stripe) {
-                if(transform_y > 0 && stripe >= 0 && stripe < SCREEN_WIDTH && transform_y < z_buffer[stripe]) {
-                     SDL_Rect dest = {draw_start_x, draw_start_y, sprite_size, sprite_size};
-                     SDL_RenderCopy(g_renderer, g_bullet_textures[bullet_sprites[i]->anim_frame], NULL, &dest);
-                     break; 
-                }
+        if (transform_y > 0) {
+            int sprite_screen_x = (int)((SCREEN_WIDTH / 2) * (1 + transform_x / transform_y));
+            int sprite_size = abs((int)(SCREEN_HEIGHT / transform_y)) / 4;
+            int draw_start_y = -sprite_size / 2 + SCREEN_HEIGHT / 2;
+            int draw_start_x = -sprite_size / 2 + sprite_screen_x;
+
+            if (sprite_screen_x >= 0 && sprite_screen_x < SCREEN_WIDTH &&
+                transform_y < z_buffer[sprite_screen_x]) {
+                SDL_Rect dest = {draw_start_x, draw_start_y, sprite_size, sprite_size};
+                SDL_RenderCopy(g_renderer, g_bullet_textures[bullet_sprites[i]->anim_frame], NULL, &dest);
             }
         }
     }
